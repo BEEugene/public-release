@@ -125,11 +125,11 @@ def create_github_repo(user, repo_name, private=False, org_name=None, if_existin
 
     if repo_exists:
         if if_existing=='ok':
-            print 'Repo {} already exists.  Proceeding...'.format(github_url)
+            print ('Repo {} already exists.  Proceeding...'.format(github_url))
         elif if_existing=='check':
-            print
+            print()
             import time; time.sleep(0.01)
-            response = raw_input('Repo {} already exists.  Proceed anyway with existing repo?  (y, n) >>'.format(github_url))
+            response = input('Repo {} already exists.  Proceed anyway with existing repo?  (y, n) >>'.format(github_url))
             assert response in ('y', 'n')
             if response!='y':
                 raise Exception('Repo {} already exists'.format(github_url))
@@ -148,13 +148,13 @@ def create_github_repo(user, repo_name, private=False, org_name=None, if_existin
 def print_repo_info(git_url, local_path):
     repo_name = github_url_to_repo_name(git_url)
     pip_path = github_url_to_pip_install_url(git_url)
-    print '='*15 + ' SUCCESS! ' + '='*15
-    print 'Created the repo: {}'.format(git_url)
-    print 'It exists locally at {}'.format(local_path)
-    print 'You can set up the repo with: \n  $ cd {}; source setup.sh'.format(local_path)
-    print 'Our you can install the repo as source in your current environment with: \n  $ pip install -e {}'.format(pip_path)
-    print 'A new user can install your repo with: \n  $ git clone {}; cd {}; source setup.sh'.format(git_url, repo_name)
-    print '='*40
+    print ('='*15 + ' SUCCESS! ' + '='*15)
+    print ('Created the repo: {}'.format(git_url))
+    print ('It exists locally at {}'.format(local_path))
+    print ('You can set up the repo with: \n  $ cd {}; source setup.sh'.format(local_path))
+    print ('Our you can install the repo as source in your current environment with: \n  $ pip install -e {}'.format(pip_path))
+    print ('A new user can install your repo with: \n  $ git clone {}; cd {}; source setup.sh'.format(git_url, repo_name))
+    print ('='*40)
 
 
 def is_valid_variable_name(name):

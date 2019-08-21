@@ -9,10 +9,10 @@ def generate_setup_py_text(**kwargs):
     _arg_order = 'name', 'author', 'author_email', 'url', 'long_description', 'version', 'packages'
     txt = 'from setuptools import setup, find_packages'
     txt+= '\n\nsetup('
-    sorted_qwargs = [(k, kwargs[k]) for k in _arg_order if k in kwargs]+[(k, v) for k, v in kwargs.iteritems() if k not in _arg_order]
+    sorted_qwargs = [(k, kwargs[k]) for k in _arg_order if k in kwargs]+[(k, v) for k, v in iter(kwargs.items()) if k not in _arg_order]
     for name, val in sorted_qwargs:
         if val is not None:
-            txt += '\n    {} = {},'.format(name, '"'+val+'"' if isinstance(val, basestring) else str(val))
+            txt += '\n    {} = {},'.format(name, '"'+val+'"' if isinstance(val, str) else str(val))
     txt+= '\n    packages=find_packages(),'
     txt+= '\n    )\n'
     return txt

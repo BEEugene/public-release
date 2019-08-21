@@ -16,7 +16,7 @@ def get_src_file(module):
     return module.__file__[:-1] if module.__file__.endswith('.pyc') else module.__file__
 
 
-def get_module_import_dict(object, scope = 'project', remove_packages = True):
+def get_module_import_dict(object, scope = 'project', remove_packages = False):
     """
     Given some code object (or the full name of a module), find all the modules that must be imported for this object to
     run.
@@ -30,8 +30,8 @@ def get_module_import_dict(object, scope = 'project', remove_packages = True):
     assert scope in ('package', 'project', 'all')
     if isinstance(object, (list, tuple)):
         dicts, names = zip(*[get_module_import_dict(ob, scope=scope) for ob in object])
-        return {k: v for d in dicts for k, v in d.iteritems()}, names
-    elif isinstance(object, basestring):
+        return {k: v for d in dicts for k, v in iter(d.items())}, names
+    elif isinstance(object, str):
         module = import_module(object)
     else:
         module = inspect.getmodule(object)
@@ -41,18 +41,19 @@ def get_module_import_dict(object, scope = 'project', remove_packages = True):
     LOGGER.info('Scanning Dependent Modules in {}.  This may take some time...'.format(this_package))
     finder.run_script(module_file)
 
-    module_files = {name: get_src_file(module) for name, module in finder.modules.iteritems() if module.__file__ is not None}
+    module_files = {name: get_src_file(module) for name, module in iter(finder.modules.items()) if module.__file__ is not None}
     module_files[module.__name__] = get_src_file(module)  # Don't forget yourself!
     # module_files =
     if scope=='package':
-        module_files = {name: mod for name, mod in module_files.iteritems() if name.split('.')[0]==this_package}
+        module_files = {name: mod for name, mod in iter(module_files.items()) if name.split('.')[0]==this_package}
     elif scope=='project':
         base_dir = os.path.dirname(os.path.dirname(module.__file__))
-        module_files = {name: mod for name, mod in module_files.iteritems() if mod.startswith(base_dir)}
+        module_files = {name: mod for name, mod in iter(module_files.items()) if mod.startswith(base_dir)}
+    #todo: for some reason find 27 modules, but copy only some of them
     LOGGER.info('Scan Complete.  {} dependent modules found.'.format(len(module_files)))
-    # module_name_to_module_path = {name: get_src_file(m) for name, m in modules.iteritems()}
+    # module_name_to_module_path = {name: get_src_file(m) for name, m in iter(module.items())}
     if remove_packages:
-        module_files = {name: path for name, path in module_files.iteritems() if not (path.endswith('__init__.py') or path.endswith('__init__.pyc'))}
+        module_files = {name: path for name, path in iter(module_files.items()) if not (path.endswith('__init__.py') or path.endswith('__init__.pyc'))}
     return module_files, module.__name__
 
 
@@ -60,7 +61,7 @@ def copy_modules_to_dir(object, destination_dir, root_package, code_subpackage=N
 
     modules, names = get_module_import_dict(object, scope=scope)
 
-    if isinstance(names, basestring):
+    if isinstance(names, str):
         names = [names]
     root_dir = os.path.join(destination_dir, root_package)
 
@@ -82,21 +83,25 @@ def copy_modules_to_dir(object, destination_dir, root_package, code_subpackage=N
             f.write('')
 
     old_name_to_new_name = {module_name: code_module_name+'.'+module_name.split('.')[-1] if module_name in names else helper_module_name+'.'+module_name.split('.')[-1] for module_name in modules.keys()}
-    duplicates = {k: v for (k, v), isdup in izip_equal(old_name_to_new_name.iteritems(), detect_duplicates(old_name_to_new_name.values())) if isdup}
+    duplicates = {k: v for (k, v), isdup in izip_equal(iter(old_name_to_new_name.items()), detect_duplicates(old_name_to_new_name.values())) if isdup}
     if len(duplicates)>0:
         raise Exception('There is a collision between two or more modules names: {}\n.  You need to rename these modules to have unique names.'.format(duplicates))
 
-    old_name_to_new_path = {module_name: os.path.join(code_dir, os.path.split(module_file)[1]) if module_name in names else os.path.join(helper_dir, os.path.split(module_file)[1]) for module_name, module_file in modules.iteritems()}
+    old_name_to_new_path = {module_name: os.path.join(code_dir, os.path.split(module_file)[1]) if module_name in names else os.path.join(helper_dir, os.path.split(module_file)[1]) for module_name, module_file in iter(modules.items())}
 
-    for module_name, module_path in modules.iteritems():
+    for module_name, module_path in iter(modules.items()):
         _, file_name = os.path.split(module_path)
 
         with open(module_path) as f:
             txt = f.read()
 
-        for dep_module_name, new_module_name in old_name_to_new_name.iteritems():
-            txt = txt.replace('from {} import '.format(dep_module_name), 'from {} import '.format(new_module_name))
+        for dep_module_name, new_module_name in iter(old_name_to_new_name.items()):
+            #todo: should replace the strings to new module name
+            txt = txt.replace('\nfrom {} import '.format(dep_module_name), '\nfrom {} import '.format(new_module_name))
+            txt = txt.replace('\nimport {}'.format(dep_module_name), '\nimport {}'.format(new_module_name))
+
             txt = txt.replace('import {}'.format(dep_module_name), 'import {}'.format(new_module_name))
+            txt = txt.replace('from {} import '.format(dep_module_name), 'from {} import '.format(new_module_name))
 
         with open(old_name_to_new_path[module_name], 'w') as f:
             f.write(txt)
@@ -105,4 +110,8 @@ def copy_modules_to_dir(object, destination_dir, root_package, code_subpackage=N
 
 
 if __name__ == '__main__':
-    copy_modules_to_dir('artemis.plotting.demo_dbplot', '/Users/peter/projects/tests/artemistest5', root_package='dbplot_demo', clear_old_package=True)
+    #copy_modules_to_dir('artemis.plotting.demo_dbplot', '/Users/peter/projects/tests/artemistest5', root_package='dbplot_demo', clear_old_package=True)
+    copy_modules_to_dir('ML.Segmentation.Keras.Unet.model_self_pretr_train_last',
+                        'C:/Users/ebara/OneDrive/Skoltech/Projects/Pythons_project/Pycharm/Pythons_dev/test_pub',
+                        scope='package',
+                        root_package='Pythons_dev', clear_old_package=True)

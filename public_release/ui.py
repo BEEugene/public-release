@@ -1,6 +1,6 @@
 import getpass
 import os
-from public_release.create_repo import fill_repo_with_initial_files, get_github_url, create_github_repo, \
+from .create_repo import fill_repo_with_initial_files, get_github_url, create_github_repo, \
     get_pip_install_path, print_repo_info, is_valid_variable_name
 
 
@@ -8,7 +8,7 @@ def get_user_response(prompt, default = None):
     if default is not None:
         prompt += ' [{}]'.format(default)
     prompt += ' >>'
-    user_input = raw_input(prompt)
+    user_input = input(prompt)
     stripped = user_input.lstrip(' ').rstrip(' ')
     if stripped=='':
         if default is None:
@@ -21,7 +21,7 @@ def get_user_response(prompt, default = None):
 
 def ui_initialize_repo():
 
-    print 'This will take you through initializing a repository.  Options in [square brackets] are defaults.'
+    print ('This will take you through initializing a repository.  Options in [square brackets] are defaults.')
 
     # Github setup questions
     name = get_user_response('Enter Repo Name')
@@ -52,7 +52,7 @@ def ui_initialize_repo():
          )
 
     if response!='y':
-        print 'Cancelled.'
+        print ('Cancelled.')
         return
 
     git_url = create_github_repo(
