@@ -16,6 +16,7 @@ P.S. As this is a fork which is optimized for python 3 scripts offline creation 
 In terminal, within the python environment of your current project, go:
 ```
 pip install -e git+http://github.com/BEEugene/public-release.git#egg=public-release #for this python 3 version
+pip install -e git+http://github.com/petered/public-release.git#egg=public-release #for original python 2 version
 ```
 ## dependencies
 ```
@@ -25,9 +26,7 @@ or
 ```
 pip install -e git+http://github.com/QUVA-Lab/artemis.git#egg=artemis 
 ```
-```
-pip install -e git+http://github.com/petered/public-release.git#egg=public-release #for original python 2 version
-```
+
 
 ## The thing which definitely works:
 
