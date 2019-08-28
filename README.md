@@ -24,11 +24,12 @@ pip install -e git+http://github.com/petered/public-release.git#egg=public-relea
 ## The thing which definitely works:
 
 To make an offline copy of the module.
-
+```
 copy_modules_to_dir( 'the_module.which_you.need_to_export',
                         'path/to/save',
                         scope='package',
                         root_package='foldername')
+```
 
 ## Create a Release:
 
