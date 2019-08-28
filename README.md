@@ -17,6 +17,14 @@ In terminal, within the python environment of your current project, go:
 ```
 pip install -e git+http://github.com/BEEugene/public-release.git#egg=public-release #for this python 3 version
 ```
+## dependencies
+```
+pip install artemis-ml 
+```
+or
+```
+pip install -e git+http://github.com/QUVA-Lab/artemis.git#egg=artemis 
+```
 ```
 pip install -e git+http://github.com/petered/public-release.git#egg=public-release #for original python 2 version
 ```
