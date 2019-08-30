@@ -5,6 +5,12 @@ This tool is useful if you have a demo script that you want to rease to the publ
 
 P.S. As this is a fork which is optimized for python 3 scripts offline creation of a demo script some features may not work. (pull requests are welcome :))
 
+P.P.S. Some Similar projects (combine python files into one):
+
+- https://github.com/pagekite/PyBreeder
+- https://github.com/Knetic/coiler
+- https://github.com/Akrog/pinliner
+
 **Contents:**
 
 - [Installing public-release](#installing-public-release): How to install the public-release package.
