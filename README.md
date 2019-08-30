@@ -3,6 +3,8 @@ A small utility for exporting a python script, along with all its dependencies, 
 
 This tool is useful if you have a demo script that you want to rease to the public, but you do not want to release your entire code-base because of confidentiality or the fact that your code is an embarassing mess.
 
+P.S. As this is a fork which is optimized for python 3 scripts offline creation of a demo script some features may not work. (pull requests are welcome :))
+
 **Contents:**
 
 - [Installing public-release](#installing-public-release): How to install the public-release package.
@@ -12,10 +14,31 @@ This tool is useful if you have a demo script that you want to rease to the publ
 ## Installing public-release
 
 In terminal, within the python environment of your current project, go:
+```
+pip install -e git+http://github.com/BEEugene/public-release.git#egg=public-release #for this python 3 version
+pip install -e git+http://github.com/petered/public-release.git#egg=public-release #for original python 2 version
+```
+## dependencies
+```
+pip install artemis-ml 
+```
+or
+```
+pip install -e git+http://github.com/QUVA-Lab/artemis.git#egg=artemis 
+```
 
+
+## The thing which definitely works:
+
+To make an offline copy of the module.
 ```
-pip install -e git+http://github.com/petered/public-release.git#egg=public-release
+copy_modules_to_dir( 'the_module.which_you.need_to_export',
+                        'path/to/save',
+                        scope='package',
+                        root_package='foldername')
 ```
+
+## Create a Release:
 
 ## Create a Public Release:
 
