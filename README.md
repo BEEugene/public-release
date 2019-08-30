@@ -1,4 +1,4 @@
-# Public Release
+# Public Release for python 3
 A small utility for exporting a python script, along with all its dependencies, into a new GitHub repository, so that it can easily be installed and run by other people.
 
 This tool is useful if you have a demo script that you want to rease to the public, but you do not want to release your entire code-base because of confidentiality or the fact that your code is an embarassing mess.
@@ -37,7 +37,13 @@ copy_modules_to_dir( 'the_module.which_you.need_to_export',
                         scope='package',
                         root_package='foldername')
 ```
-
+To make an offline copy of the whole project within this module is lying.
+```
+copy_modules_to_dir('the_module.which_you.need_to_export', # which lies in project_fold
+                        'path/to/save',
+                        scope='project', search_whole_proj = "project_fold",
+                        root_package='test', clear_old_package=True)
+```
 ## Create a Release:
 
 ## Create a Public Release:
